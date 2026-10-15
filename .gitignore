@@ -1,0 +1,21 @@
+# Terraform state — may contain sensitive attributes in plaintext
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Provider binaries and module cache — large, platform-specific, re-downloadable
+.terraform/
+
+# Variable files — contain subscription and tenant IDs
+*.tfvars
+!*.tfvars.example
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Plan output — a saved plan can contain secrets
+*.tfplan
+
+# macOS
+.DS_Store
