@@ -28,3 +28,13 @@ variable "location" {
   type        = string
   default     = "germanywestcentral"
 }
+
+variable "data_storage_account_name" {
+  description = "Globally unique name for the shared ADLS Gen2 account (3-24 chars, lowercase letters and digits only)."
+  type        = string
+
+  validation {
+    condition     = can(regex("^[a-z0-9]{3,24}$", var.data_storage_account_name))
+    error_message = "Storage account names must be 3-24 characters, lowercase letters and digits only."
+  }
+}
