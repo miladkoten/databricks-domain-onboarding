@@ -17,3 +17,21 @@ resource "azurerm_storage_account" "data" {
     purpose = "platform-shared-domain-data"
   }
 }
+
+module "domain_alpha" {
+  source = "../../modules/domain_onboarding"
+
+  providers = {
+    azurerm              = azurerm
+    databricks.account   = databricks.account
+    databricks.workspace = databricks.workspace
+  }
+
+  domain_name         = "alpha"
+  environment         = "dev"
+  owner_group         = "alpha-owners"
+  cost_centre         = "CC-1001"
+  resource_group_name = data.azurerm_resource_group.platform.name
+  location            = var.location
+  storage_account_id  = azurerm_storage_account.data.id
+}
