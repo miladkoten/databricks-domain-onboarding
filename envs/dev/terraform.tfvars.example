@@ -1,0 +1,5 @@
+subscription_id          = "00000000-0000-0000-0000-000000000000"
+tenant_id                = "00000000-0000-0000-0000-000000000000"
+databricks_account_id    = "00000000-0000-0000-0000-000000000000"
+workspace_resource_group = "Milz-rg1"
+workspace_name           = "dbs-ws-platform-eng"
