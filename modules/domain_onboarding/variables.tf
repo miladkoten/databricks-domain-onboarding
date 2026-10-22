@@ -57,3 +57,14 @@ variable "storage_account_name" {
   description = "Name of the shared ADLS Gen2 account, used to build the abfss:// URL."
   type        = string
 }
+
+variable "schemas" {
+  description = "Schemas created in the domain catalog. Must include raw and curated."
+  type        = list(string)
+  default     = ["raw", "curated"]
+
+  validation {
+    condition     = contains(var.schemas, "raw") && contains(var.schemas, "curated")
+    error_message = "schemas must include both raw and curated."
+  }
+}

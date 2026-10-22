@@ -56,3 +56,34 @@ resource "databricks_external_location" "domain" {
   credential_name = databricks_storage_credential.domain.name
   comment         = "Storage for domain ${var.domain_name} (${var.environment})."
 }
+resource "databricks_catalog" "domain" {
+  provider = databricks.workspace
+
+  name         = local.uc_name
+  storage_root = databricks_external_location.domain.url
+  comment      = "Catalog for domain ${var.domain_name} (${var.environment}). Owner: ${var.owner_group}."
+  properties   = local.tags
+
+  # PoC only: allows terraform destroy to drop a catalog that contains objects.
+  force_destroy = true
+}
+
+resource "databricks_schema" "domain" {
+  provider = databricks.workspace
+  for_each = toset(var.schemas)
+
+  catalog_name = databricks_catalog.domain.name
+  name         = each.key
+  comment      = "${each.key} schema for domain ${var.domain_name}."
+  properties   = local.tags
+}
+
+resource "databricks_volume" "landing" {
+  provider = databricks.workspace
+
+  catalog_name = databricks_catalog.domain.name
+  schema_name  = databricks_schema.domain["raw"].name
+  name         = "landing"
+  volume_type  = "MANAGED"
+  comment      = "Landing area for non-tabular files."
+}
