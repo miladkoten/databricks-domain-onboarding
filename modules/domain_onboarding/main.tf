@@ -168,3 +168,58 @@ resource "databricks_grants" "schema" {
     databricks_mws_permission_assignment.engineer,
   ]
 }
+
+resource "databricks_cluster_policy" "domain" {
+  provider = databricks.workspace
+
+  name = "policy-${local.suffix}"
+
+  definition = jsonencode({
+    node_type_id = {
+      type         = "allowlist"
+      values       = var.allowed_node_types
+      defaultValue = var.allowed_node_types[0]
+    }
+    driver_node_type_id = {
+      type         = "allowlist"
+      values       = var.allowed_node_types
+      defaultValue = var.allowed_node_types[0]
+    }
+    "autoscale.max_workers" = {
+      type         = "range"
+      maxValue     = var.max_workers
+      defaultValue = var.max_workers
+    }
+    num_workers = {
+      type     = "range"
+      maxValue = var.max_workers
+    }
+    autotermination_minutes = {
+      type         = "range"
+      minValue     = 10
+      maxValue     = var.max_autotermination_minutes
+      defaultValue = var.max_autotermination_minutes
+    }
+    data_security_mode = {
+      type         = "allowlist"
+      values       = ["SINGLE_USER", "USER_ISOLATION"]
+      defaultValue = "USER_ISOLATION"
+    }
+    "custom_tags.cost_centre" = { type = "fixed", value = var.cost_centre }
+    "custom_tags.domain"      = { type = "fixed", value = var.domain_name }
+    "custom_tags.environment" = { type = "fixed", value = var.environment }
+    "custom_tags.owner"       = { type = "fixed", value = var.owner_group }
+  })
+}
+
+resource "databricks_permissions" "policy" {
+  provider          = databricks.workspace
+  cluster_policy_id = databricks_cluster_policy.domain.id
+
+  access_control {
+    group_name       = databricks_group.engineer.display_name
+    permission_level = "CAN_USE"
+  }
+
+  depends_on = [databricks_mws_permission_assignment.engineer]
+}
