@@ -88,14 +88,26 @@ resource "databricks_volume" "landing" {
   comment      = "Landing area for non-tabular files."
 }
 
+data "azuread_group" "reader" {
+  display_name     = var.reader_group_name
+  security_enabled = true
+}
+
+data "azuread_group" "engineer" {
+  display_name     = var.engineer_group_name
+  security_enabled = true
+}
+
 resource "databricks_group" "reader" {
   provider     = databricks.account
-  display_name = "${local.uc_name}_reader"
+  display_name = data.azuread_group.reader.display_name
+  external_id  = data.azuread_group.reader.object_id
 }
 
 resource "databricks_group" "engineer" {
   provider     = databricks.account
-  display_name = "${local.uc_name}_engineer"
+  display_name = data.azuread_group.engineer.display_name
+  external_id  = data.azuread_group.engineer.object_id
 }
 
 resource "databricks_mws_permission_assignment" "reader" {

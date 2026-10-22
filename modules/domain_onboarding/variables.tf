@@ -73,3 +73,23 @@ variable "workspace_id" {
   description = "Numeric ID of the Databricks workspace the groups are assigned to."
   type        = string
 }
+
+variable "reader_group_name" {
+  description = "Name of the existing Entra security group for readers, e.g. sg-dbx-alpha-dev-reader."
+  type        = string
+
+  validation {
+    condition     = startswith(var.reader_group_name, "sg-dbx-")
+    error_message = "reader_group_name must start with sg-dbx- (platform naming convention)."
+  }
+}
+
+variable "engineer_group_name" {
+  description = "Name of the existing Entra security group for engineers, e.g. sg-dbx-alpha-dev-engineer."
+  type        = string
+
+  validation {
+    condition     = startswith(var.engineer_group_name, "sg-dbx-")
+    error_message = "engineer_group_name must start with sg-dbx- (platform naming convention)."
+  }
+}

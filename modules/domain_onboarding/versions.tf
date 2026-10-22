@@ -9,5 +9,9 @@ terraform {
       version               = "~> 1.88"
       configuration_aliases = [databricks.account, databricks.workspace]
     }
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = "~> 3.0"
+    }
   }
 }

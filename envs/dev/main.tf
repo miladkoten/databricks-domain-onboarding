@@ -27,8 +27,10 @@ module "domain_alpha" {
 
   providers = {
     azurerm              = azurerm
+    azuread              = azuread
     databricks.account   = databricks.account
     databricks.workspace = databricks.workspace
+
   }
 
   domain_name         = "alpha"
@@ -38,4 +40,6 @@ module "domain_alpha" {
   resource_group_name = data.azurerm_resource_group.platform.name
   location            = var.location
   storage_account_id  = azurerm_storage_account.data.id
+  reader_group_name   = "sg-dbx-alpha-dev-reader"
+  engineer_group_name = "sg-dbx-alpha-dev-engineer"
 }

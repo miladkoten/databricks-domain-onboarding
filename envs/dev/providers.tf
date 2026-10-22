@@ -8,6 +8,10 @@ terraform {
       source  = "databricks/databricks"
       version = "~> 1.88"
     }
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = "~> 3.0"
+    }
   }
 }
 
@@ -15,6 +19,10 @@ provider "azurerm" {
   subscription_id = var.subscription_id
   tenant_id       = var.tenant_id
   features {}
+}
+
+provider "azuread" {
+  tenant_id = var.tenant_id
 }
 
 # The workspace already exists; we consume it rather than manage it.
