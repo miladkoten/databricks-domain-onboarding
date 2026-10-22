@@ -21,6 +21,8 @@ resource "azurerm_storage_account" "data" {
 module "domain_alpha" {
   source = "../../modules/domain_onboarding"
 
+  storage_account_name = azurerm_storage_account.data.name
+
   providers = {
     azurerm              = azurerm
     databricks.account   = databricks.account
