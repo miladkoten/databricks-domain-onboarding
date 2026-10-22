@@ -25,9 +25,11 @@ data "azurerm_databricks_workspace" "this" {
 
 # Account scope: groups, metastore assignment.
 provider "databricks" {
-  alias      = "account"
-  host       = "https://accounts.azuredatabricks.net"
-  account_id = var.databricks_account_id
+  alias           = "account"
+  host            = "https://accounts.azuredatabricks.net"
+  account_id      = var.databricks_account_id
+  azure_tenant_id = var.tenant_id
+  auth_type       = "azure-cli"
 }
 
 # Workspace scope: catalogs, schemas, grants, policies.

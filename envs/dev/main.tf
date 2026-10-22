@@ -23,6 +23,8 @@ module "domain_alpha" {
 
   storage_account_name = azurerm_storage_account.data.name
 
+  workspace_id = data.azurerm_databricks_workspace.this.workspace_id
+
   providers = {
     azurerm              = azurerm
     databricks.account   = databricks.account

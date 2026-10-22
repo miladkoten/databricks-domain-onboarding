@@ -68,3 +68,8 @@ variable "schemas" {
     error_message = "schemas must include both raw and curated."
   }
 }
+
+variable "workspace_id" {
+  description = "Numeric ID of the Databricks workspace the groups are assigned to."
+  type        = string
+}

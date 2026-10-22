@@ -87,3 +87,72 @@ resource "databricks_volume" "landing" {
   volume_type  = "MANAGED"
   comment      = "Landing area for non-tabular files."
 }
+
+resource "databricks_group" "reader" {
+  provider     = databricks.account
+  display_name = "${local.uc_name}_reader"
+}
+
+resource "databricks_group" "engineer" {
+  provider     = databricks.account
+  display_name = "${local.uc_name}_engineer"
+}
+
+resource "databricks_mws_permission_assignment" "reader" {
+  provider     = databricks.account
+  workspace_id = var.workspace_id
+  principal_id = databricks_group.reader.id
+  permissions  = ["USER"]
+}
+
+resource "databricks_mws_permission_assignment" "engineer" {
+  provider     = databricks.account
+  workspace_id = var.workspace_id
+  principal_id = databricks_group.engineer.id
+  permissions  = ["USER"]
+}
+
+resource "databricks_grants" "catalog" {
+  provider = databricks.workspace
+  catalog  = databricks_catalog.domain.name
+
+  grant {
+    principal  = databricks_group.reader.display_name
+    privileges = ["USE_CATALOG"]
+  }
+
+  grant {
+    principal  = databricks_group.engineer.display_name
+    privileges = ["USE_CATALOG"]
+  }
+
+  depends_on = [
+    databricks_mws_permission_assignment.reader,
+    databricks_mws_permission_assignment.engineer,
+  ]
+}
+
+resource "databricks_grants" "schema" {
+  provider = databricks.workspace
+  for_each = databricks_schema.domain
+
+  schema = each.value.id
+
+  grant {
+    principal  = databricks_group.reader.display_name
+    privileges = ["USE_SCHEMA", "SELECT", "READ_VOLUME"]
+  }
+
+  grant {
+    principal = databricks_group.engineer.display_name
+    privileges = [
+      "USE_SCHEMA", "SELECT", "READ_VOLUME",
+      "CREATE_TABLE", "MODIFY", "WRITE_VOLUME",
+    ]
+  }
+
+  depends_on = [
+    databricks_mws_permission_assignment.reader,
+    databricks_mws_permission_assignment.engineer,
+  ]
+}
