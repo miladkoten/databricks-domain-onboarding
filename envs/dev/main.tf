@@ -43,3 +43,26 @@ module "domain_alpha" {
   reader_group_name   = "sg-dbx-alpha-dev-reader"
   engineer_group_name = "sg-dbx-alpha-dev-engineer"
 }
+
+module "domain_beta" {
+  source = "../../modules/domain_onboarding"
+
+  providers = {
+    azurerm              = azurerm
+    azuread              = azuread
+    databricks.account   = databricks.account
+    databricks.workspace = databricks.workspace
+  }
+
+  domain_name          = "beta"
+  environment          = "dev"
+  owner_group          = "beta-owners"
+  cost_centre          = "CC-1002"
+  reader_group_name    = "sg-dbx-beta-dev-reader"
+  engineer_group_name  = "sg-dbx-beta-dev-engineer"
+  resource_group_name  = data.azurerm_resource_group.platform.name
+  location             = var.location
+  storage_account_id   = azurerm_storage_account.data.id
+  storage_account_name = azurerm_storage_account.data.name
+  workspace_id         = data.azurerm_databricks_workspace.this.workspace_id
+}
