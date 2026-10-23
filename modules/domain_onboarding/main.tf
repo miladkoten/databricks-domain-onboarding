@@ -55,8 +55,9 @@ resource "databricks_external_location" "domain" {
   url             = "abfss://${azurerm_storage_container.domain.name}@${var.storage_account_name}.dfs.core.windows.net/"
   credential_name = databricks_storage_credential.domain.name
   comment         = "Storage for domain ${var.domain_name} (${var.environment})."
-  force_destroy   = true
+  force_destroy   = var.force_destroy
 }
+
 resource "databricks_catalog" "domain" {
   provider = databricks.workspace
 
@@ -64,9 +65,7 @@ resource "databricks_catalog" "domain" {
   storage_root = databricks_external_location.domain.url
   comment      = "Catalog for domain ${var.domain_name} (${var.environment}). Owner: ${var.owner_group}."
   properties   = local.tags
-
-  # PoC only: allows terraform destroy to drop a catalog that contains objects.
-  force_destroy = true
+  force_destroy = var.force_destroy
 }
 
 resource "databricks_schema" "domain" {

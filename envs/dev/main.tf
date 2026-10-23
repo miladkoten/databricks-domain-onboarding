@@ -18,34 +18,9 @@ resource "azurerm_storage_account" "data" {
   }
 }
 
-module "domain_alpha" {
-  source = "../../modules/domain_onboarding"
-
-  storage_account_name = azurerm_storage_account.data.name
-
-  workspace_id = data.azurerm_databricks_workspace.this.workspace_id
-
-  providers = {
-    azurerm              = azurerm
-    azuread              = azuread
-    databricks.account   = databricks.account
-    databricks.workspace = databricks.workspace
-
-  }
-
-  domain_name         = "alpha"
-  environment         = "dev"
-  owner_group         = "alpha-owners"
-  cost_centre         = "CC-1001"
-  resource_group_name = data.azurerm_resource_group.platform.name
-  location            = var.location
-  storage_account_id  = azurerm_storage_account.data.id
-  reader_group_name   = "sg-dbx-alpha-dev-reader"
-  engineer_group_name = "sg-dbx-alpha-dev-engineer"
-}
-
-module "domain_beta" {
-  source = "../../modules/domain_onboarding"
+module "domain" {
+  source   = "../../modules/domain_onboarding"
+  for_each = var.domains
 
   providers = {
     azurerm              = azurerm
@@ -54,12 +29,18 @@ module "domain_beta" {
     databricks.workspace = databricks.workspace
   }
 
-  domain_name          = "beta"
-  environment          = "dev"
-  owner_group          = "beta-owners"
-  cost_centre          = "CC-1002"
-  reader_group_name    = "sg-dbx-beta-dev-reader"
-  engineer_group_name  = "sg-dbx-beta-dev-engineer"
+  domain_name                 = each.key
+  environment                 = var.environment
+  owner_group                 = each.value.owner_group
+  cost_centre                 = each.value.cost_centre
+  reader_group_name           = each.value.reader_group_name
+  engineer_group_name         = each.value.engineer_group_name
+  schemas                     = each.value.schemas
+  allowed_node_types          = each.value.allowed_node_types
+  max_workers                 = each.value.max_workers
+  max_autotermination_minutes = each.value.max_autotermination_minutes
+  force_destroy               = var.allow_force_destroy
+
   resource_group_name  = data.azurerm_resource_group.platform.name
   location             = var.location
   storage_account_id   = azurerm_storage_account.data.id

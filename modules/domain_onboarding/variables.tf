@@ -62,7 +62,8 @@ variable "schemas" {
   description = "Schemas created in the domain catalog. Must include raw and curated."
   type        = list(string)
   default     = ["raw", "curated"]
-
+  nullable    = false
+  
   validation {
     condition     = contains(var.schemas, "raw") && contains(var.schemas, "curated")
     error_message = "schemas must include both raw and curated."
@@ -98,7 +99,7 @@ variable "allowed_node_types" {
   description = "VM sizes domain users may choose for clusters."
   type        = list(string)
   default     = ["Standard_DS3_v2", "Standard_D4ds_v5"]
-
+    nullable  = false
   validation {
     condition     = length(var.allowed_node_types) > 0
     error_message = "allowed_node_types must contain at least one VM size."
@@ -109,7 +110,7 @@ variable "max_workers" {
   description = "Maximum number of workers per cluster."
   type        = number
   default     = 4
-
+  nullable    = false
   validation {
     condition     = var.max_workers >= 1 && var.max_workers <= 10
     error_message = "max_workers must be between 1 and 10."
@@ -120,9 +121,15 @@ variable "max_autotermination_minutes" {
   description = "Longest idle time before a cluster shuts down."
   type        = number
   default     = 30
-
+  nullable    = false
   validation {
     condition     = var.max_autotermination_minutes >= 10 && var.max_autotermination_minutes <= 120
     error_message = "max_autotermination_minutes must be between 10 and 120."
   }
+}
+
+variable "force_destroy" {
+  description = "Let terraform destroy drop the catalog and external location while they still hold objects. Sandbox only."
+  type        = bool
+  default     = false
 }

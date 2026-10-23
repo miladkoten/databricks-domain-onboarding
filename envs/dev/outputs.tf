@@ -1,9 +1,6 @@
 output "domains" {
   description = "Onboarded domains and their key resources."
-  value = {
-    alpha = module.domain_alpha
-    beta  = module.domain_beta
-  }
+  value       = module.domain
 }
 
 output "data_storage_account_name" {

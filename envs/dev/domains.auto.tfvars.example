@@ -1,0 +1,14 @@
+domains = {
+  alpha = {
+    owner_group         = "alpha-owners"
+    cost_centre         = "CC-1001"
+    reader_group_name   = "sg-dbx-alpha-dev-reader"
+    engineer_group_name = "sg-dbx-alpha-dev-engineer"
+  }
+  beta = {
+    owner_group         = "beta-owners"
+    cost_centre         = "CC-1002"
+    reader_group_name   = "sg-dbx-beta-dev-reader"
+    engineer_group_name = "sg-dbx-beta-dev-engineer"
+  }
+}
