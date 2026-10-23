@@ -55,6 +55,7 @@ resource "databricks_external_location" "domain" {
   url             = "abfss://${azurerm_storage_container.domain.name}@${var.storage_account_name}.dfs.core.windows.net/"
   credential_name = databricks_storage_credential.domain.name
   comment         = "Storage for domain ${var.domain_name} (${var.environment})."
+  force_destroy   = true
 }
 resource "databricks_catalog" "domain" {
   provider = databricks.workspace
