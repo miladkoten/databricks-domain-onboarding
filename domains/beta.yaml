@@ -1,0 +1,6 @@
+# Request to onboard a domain onto the shared Databricks platform.
+name: gamma
+owner_group: gamma-owners
+cost_centre: CC-12
+max_worker: 50
+max_workers: 50
